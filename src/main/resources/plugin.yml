@@ -1,0 +1,9 @@
+name: SimpleAuctions
+version: '${project.version}'
+main: com.itedya.simpleauctions.SimpleAuctions
+api-version: 1.18
+authors: [ itedya ]
+website: itedya.com
+commands:
+  licytacje:
+    description: Komenda pluginu SimpleAuctions
