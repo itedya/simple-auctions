@@ -2,9 +2,18 @@ package com.itedya.simpleauctions;
 
 import com.itedya.simpleauctions.commands.Main;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
+
+import java.io.File;
 
 public final class SimpleAuctions extends JavaPlugin {
+    protected SimpleAuctions(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file)
+    {
+        super(loader, description, dataFolder, file);
+    }
+
     @Override
     public void onEnable() {
         try {
