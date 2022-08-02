@@ -19,6 +19,6 @@ public class HowMuchQuantityOfItemPrompt extends NumericPrompt {
 
     @Override
     public @NotNull String getPromptText(@NotNull ConversationContext context) {
-        return ChatUtil.p("&8Podaj &lilość przedmiotu &r&8który chcesz sprzedać");
+        return ChatUtil.p("&7Podaj &lilość przedmiotu &r&7który chcesz sprzedać");
     }
 }
