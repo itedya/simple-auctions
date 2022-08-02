@@ -1,5 +1,7 @@
 package com.itedya.simpleauctions.commands;
 
+import com.itedya.simpleauctions.SimpleAuctions;
+import com.itedya.simpleauctions.prompts.create.HowMuchQuantityOfItemPrompt;
 import com.itedya.simpleauctions.utils.ChatUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -27,7 +29,7 @@ public class CreateAuctionSubCommand implements SubCommand {
                 return true;
             }
 
-            Conversation conversation = new ConversationFactory()
+            Conversation conversation = new ConversationFactory(SimpleAuctions.getInstance())
                     .withFirstPrompt(new HowMuchQuantityOfItemPrompt())
                     .withConversationCanceller(new ExactMatchConversationCanceller("wyjdź"))
                     .buildConversation(player);

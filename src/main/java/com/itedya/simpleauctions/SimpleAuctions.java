@@ -9,13 +9,20 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import java.io.File;
 
 public final class SimpleAuctions extends JavaPlugin {
-    protected SimpleAuctions(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file)
-    {
+    protected SimpleAuctions(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
+    }
+
+    private static SimpleAuctions instance;
+
+    public static SimpleAuctions getInstance() {
+        return instance;
     }
 
     @Override
     public void onEnable() {
+        instance = this;
+
         try {
             PluginCommand command = this.getCommand("licytacje");
             assert command != null : "Command is null!";
