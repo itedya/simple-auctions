@@ -9,6 +9,10 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import java.io.File;
 
 public final class SimpleAuctions extends JavaPlugin {
+    public SimpleAuctions() {
+        super();
+    }
+
     protected SimpleAuctions(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
     }
