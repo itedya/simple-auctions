@@ -3,16 +3,19 @@ package com.itedya.simpleauctions.commands;
 import com.itedya.simpleauctions.SimpleAuctions;
 import com.itedya.simpleauctions.prompts.create.HowMuchQuantityOfItemPrompt;
 import com.itedya.simpleauctions.utils.ChatUtil;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.ExactMatchConversationCanceller;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public class CreateAuctionSubCommand implements SubCommand {
 
@@ -29,9 +32,18 @@ public class CreateAuctionSubCommand implements SubCommand {
                 return true;
             }
 
+            ItemStack heldItem = player.getItemInHand();
+
+            if (heldItem.getType().equals(Material.AIR)) {
+                player.sendMessage(ChatUtil.p("&cMusisz trzymać przedmiot w ręce, aby wykonać tą komendę!"));
+                return true;
+            }
+
             Conversation conversation = new ConversationFactory(SimpleAuctions.getInstance())
                     .withFirstPrompt(new HowMuchQuantityOfItemPrompt())
                     .withConversationCanceller(new ExactMatchConversationCanceller("wyjdź"))
+                    .withInitialSessionData(Map.of("item", heldItem.getType()))
+                    .withLocalEcho(false)
                     .buildConversation(player);
 
             conversation.begin();
