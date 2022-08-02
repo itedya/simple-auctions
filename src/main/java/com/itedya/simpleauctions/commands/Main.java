@@ -13,6 +13,7 @@ public class Main implements SubCommand {
 
     public Main() {
         this.executorMap = new HashMap<>();
+        this.executorMap.put("stworz", new CreateAuctionSubCommand());
     }
 
     @Override
