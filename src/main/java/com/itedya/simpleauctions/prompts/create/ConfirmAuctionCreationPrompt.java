@@ -1,6 +1,8 @@
 package com.itedya.simpleauctions.prompts.create;
 
+import com.itedya.simpleauctions.runnables.CreateAuctionRunnable;
 import com.itedya.simpleauctions.utils.ChatUtil;
+import com.itedya.simpleauctions.utils.ThreadUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -11,8 +13,6 @@ import org.bukkit.conversations.BooleanPrompt;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,9 @@ public class ConfirmAuctionCreationPrompt extends BooleanPrompt {
         if (!input) {
             player.sendMessage(ChatUtil.p("&e&lAnulowano &r&etworzenie aukcji przedmiotu"));
         } else {
-            // TODO: make runnable
+            Material item = (Material) context.getSessionData("item");
+            int quantity = (int) context.getSessionData("quantity");
+            ThreadUtil.async(new CreateAuctionRunnable(player, item, quantity));
         }
 
         return null;
