@@ -15,7 +15,7 @@ public class Main extends SubCommand {
         var plugin = SimpleAuctions.getInstance();
         var instance = new Main();
 
-        var command = plugin.getCommand("wyspa");
+        var command = plugin.getCommand("licytacje");
         assert command != null : "Command is null!";
 
         command.setExecutor(instance);
