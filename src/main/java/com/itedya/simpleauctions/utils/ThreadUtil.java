@@ -28,4 +28,10 @@ public class ThreadUtil {
 
         return Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, runnable, delay);
     }
+
+    public static int syncRepeat(Runnable runnable, int repeatDelay) {
+        SimpleAuctions plugin = SimpleAuctions.getInstance();
+
+        return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, runnable, 0, repeatDelay);
+    }
 }
