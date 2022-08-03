@@ -12,15 +12,15 @@ public class ProvideStartCostPrompt extends NumericPrompt {
 
     @Override
     protected @Nullable Prompt acceptValidatedInput(@NotNull ConversationContext conversationContext, @NotNull Number number) {
-        int startPrice = number.intValue();
+        int startingPrice = number.intValue();
 
-        if (startPrice <= 0) {
+        if (startingPrice <= 0) {
             Conversable conversable = conversationContext.getForWhom();
             conversable.sendRawMessage(ChatUtil.p("&eMusisz podać liczbę większą od 0!"));
             return new ProvideStartCostPrompt();
         }
 
-        conversationContext.setSessionData("startPrice", startPrice);
+        conversationContext.setSessionData("startingPrice", startingPrice);
 
         return new ConfirmAuctionCreationPrompt();
     }
