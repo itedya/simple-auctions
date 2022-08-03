@@ -17,7 +17,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class CreateAuctionSubCommand implements SubCommand {
+public class CreateAuctionSubCommand extends SubCommand {
+    public CreateAuctionSubCommand() {
+        super("simpleauctions.create");
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
