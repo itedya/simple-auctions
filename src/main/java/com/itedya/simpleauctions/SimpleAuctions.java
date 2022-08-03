@@ -1,6 +1,8 @@
 package com.itedya.simpleauctions;
 
 import com.itedya.simpleauctions.commands.Main;
+import com.itedya.simpleauctions.runnables.ScheduleAuctionAnnounciationRunnable;
+import com.itedya.simpleauctions.utils.ThreadUtil;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,10 +33,9 @@ public final class SimpleAuctions extends JavaPlugin {
             PluginCommand command = this.getCommand("licytacje");
             assert command != null : "Command is null!";
 
-            Main mainCommand = new Main();
+            Main.register();
 
-            command.setExecutor(mainCommand);
-            command.setTabCompleter(mainCommand);
+            ThreadUtil.sync(new ScheduleAuctionAnnounciationRunnable());
         } catch (Exception e) {
             e.printStackTrace();
         }
