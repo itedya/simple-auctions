@@ -13,6 +13,10 @@ import java.util.UUID;
 public class AuctionDao {
     private final static List<AuctionDto> data = new ArrayList();
 
+    public static int getSize() {
+        return data.size();
+    }
+
     public static AuctionDto create(Player seller, Material material, int quantity) {
         AuctionDto auctionDto = new AuctionDto();
         auctionDto.uuid = UUID.randomUUID().toString();
