@@ -30,7 +30,8 @@ public class ConfirmAuctionCreationPrompt extends ValidatingPrompt {
 
             Material item = (Material) context.getSessionData("item");
             int quantity = (int) context.getSessionData("quantity");
-            ThreadUtil.async(new CreateAuctionRunnable(player, item, quantity));
+            int startingPrice = (int) context.getSessionData("startingPrice");
+            ThreadUtil.async(new CreateAuctionRunnable(player, item, quantity, startingPrice));
         }
 
         return null;
@@ -57,8 +58,17 @@ public class ConfirmAuctionCreationPrompt extends ValidatingPrompt {
                 .append(itemComponent).color(ChatColor.YELLOW).bold(true)
                 .create();
 
+        int startingPrice = (int) context.getSessionData("startingPrice");
+
+        BaseComponent[] itemStartPriceComponents = new ComponentBuilder()
+                .color(ChatColor.GRAY)
+                .append("Cena startowa: ")
+                .append(startingPrice + "$").color(ChatColor.YELLOW).bold(true)
+                .create();
+
         player.sendMessage(itemNameComponents);
         player.sendMessage(itemQuantityComponents);
+        player.sendMessage(itemStartPriceComponents);
 
         return ChatUtil.p("&a&lCzy potwierdzasz? &r&7(Tak/tak/Nie/nie)");
     }
