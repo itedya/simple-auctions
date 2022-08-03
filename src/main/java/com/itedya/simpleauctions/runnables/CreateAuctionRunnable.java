@@ -41,7 +41,7 @@ public class CreateAuctionRunnable extends BukkitRunnable {
                 message += "Jesteś %d w kolejce".formatted(AuctionDao.getSize() - 1);
             }
 
-            executor.sendMessage(message);
+            executor.sendMessage(ChatUtil.p(message));
         } catch (Exception e) {
             executor.sendMessage(ChatUtil.SERVER_ERROR);
             e.printStackTrace();
