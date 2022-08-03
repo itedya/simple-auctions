@@ -1,8 +1,6 @@
 package com.itedya.simpleauctions.prompts.create;
 
 import com.itedya.simpleauctions.utils.ChatUtil;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
@@ -14,7 +12,7 @@ public class HowMuchQuantityOfItemPrompt extends NumericPrompt {
     protected @Nullable Prompt acceptValidatedInput(@NotNull ConversationContext context, @NotNull Number input) {
         context.setSessionData("quantity", input.intValue());
 
-        return new ConfirmAuctionCreationPrompt();
+        return new ProvideStartCostPrompt();
     }
 
     @Override
