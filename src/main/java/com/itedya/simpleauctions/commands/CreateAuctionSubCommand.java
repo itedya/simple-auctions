@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class CreateAuctionSubCommand extends SubCommand {
                 return true;
             }
 
-            if (!player.hasPermission("simpleauctions.create")) {
+            if (!player.hasPermission(permission)) {
                 player.sendMessage(ChatUtil.NO_PERMISSION);
                 return true;
             }
@@ -58,6 +59,6 @@ public class CreateAuctionSubCommand extends SubCommand {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return null;
+        return new ArrayList<>();
     }
 }
