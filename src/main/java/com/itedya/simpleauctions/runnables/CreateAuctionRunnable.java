@@ -12,11 +12,13 @@ public class CreateAuctionRunnable extends BukkitRunnable {
     private final Player executor;
     private final Material material;
     private final int quantity;
+    private final int startingPrice;
 
-    public CreateAuctionRunnable(Player player, Material material, int quantity) {
+    public CreateAuctionRunnable(Player player, Material material, int quantity, int startingPrice) {
         this.executor = player;
         this.material = material;
         this.quantity = quantity;
+        this.startingPrice = startingPrice;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class CreateAuctionRunnable extends BukkitRunnable {
 
             inventory.removeItemAnySlot(itemStack);
 
-            AuctionDao.create(executor, material, quantity);
+            AuctionDao.create(executor, material, quantity, startingPrice);
 
             int size = AuctionDao.getSize();
 
