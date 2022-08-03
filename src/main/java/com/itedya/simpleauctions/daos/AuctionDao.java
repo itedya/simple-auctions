@@ -4,6 +4,7 @@ import com.itedya.simpleauctions.dtos.AuctionDto;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,5 +31,15 @@ public class AuctionDao {
         data.add(auctionDto);
 
         return auctionDto;
+    }
+
+    public static @Nullable AuctionDto shift() {
+        try {
+            var item = data.get(0);
+            data.remove(0);
+            return item;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
