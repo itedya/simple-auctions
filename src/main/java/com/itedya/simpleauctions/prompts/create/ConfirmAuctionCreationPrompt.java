@@ -9,14 +9,12 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Material;
-import org.bukkit.conversations.BooleanPrompt;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ConfirmAuctionCreationPrompt extends BooleanPrompt {
+public class ConfirmAuctionCreationPrompt extends ValidatingPrompt {
     @Override
     protected boolean isInputValid(@NotNull ConversationContext context, @NotNull String input) {
         String[] accepted = {"tak", "Tak", "nie", "Nie"};
@@ -24,12 +22,12 @@ public class ConfirmAuctionCreationPrompt extends BooleanPrompt {
     }
 
     @Override
-    protected @Nullable Prompt acceptValidatedInput(@NotNull ConversationContext context, boolean input) {
-        Player player = (Player) context.getForWhom();
-
-        if (!input) {
-            player.sendMessage(ChatUtil.p("&e&lAnulowano &r&etworzenie aukcji przedmiotu"));
+    protected @Nullable Prompt acceptValidatedInput(@NotNull ConversationContext context, String input) {
+        if (input.equals("nie") || input.equals("Nie")) {
+            context.getForWhom().sendRawMessage(ChatUtil.p("&e&lAnulowano &r&etworzenie aukcji przedmiotu"));
         } else {
+            Player player = (Player) context.getForWhom();
+
             Material item = (Material) context.getSessionData("item");
             int quantity = (int) context.getSessionData("quantity");
             ThreadUtil.async(new CreateAuctionRunnable(player, item, quantity));
