@@ -18,12 +18,13 @@ public class AuctionDao {
         return data.size();
     }
 
-    public static AuctionDto create(Player seller, Material material, int quantity) {
+    public static AuctionDto create(Player seller, Material material, int quantity, int startingPrice) {
         AuctionDto auctionDto = new AuctionDto();
         auctionDto.uuid = UUID.randomUUID().toString();
         auctionDto.buyerUUID = null;
         auctionDto.sellerUUID = seller.getUniqueId().toString();
         auctionDto.material = material;
+        auctionDto.startingPrice = startingPrice;
         auctionDto.quantity = quantity;
         auctionDto.createdAt = new Date(Calendar.getInstance().getTime().getTime());
         auctionDto.updatedAt = auctionDto.createdAt;

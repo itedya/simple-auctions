@@ -9,6 +9,7 @@ public class AuctionDto implements Dto {
     public String sellerUUID;
     public String buyerUUID;
     public Material material;
+    public int startingPrice;
     public int quantity;
     public Date createdAt;
     public Date updatedAt;
