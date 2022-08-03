@@ -31,6 +31,11 @@ public class CreateAuctionRunnable extends BukkitRunnable {
                 return;
             }
 
+            ItemStack itemStack = new ItemStack(material);
+            itemStack.setAmount(quantity);
+
+            inventory.removeItemAnySlot(itemStack);
+
             AuctionDao.create(executor, material, quantity);
 
             int size = AuctionDao.getSize();
