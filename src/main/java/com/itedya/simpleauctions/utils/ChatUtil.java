@@ -5,7 +5,11 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
 public class ChatUtil {
-
+    public final static BaseComponent[] PREFIX = new ComponentBuilder()
+            .append("[").color(ChatColor.GOLD)
+            .append("LICYTACJE").color(ChatColor.YELLOW)
+            .append("]").color(ChatColor.GOLD)
+            .create();
     public final static String SERVER_ERROR = ChatUtil.p("&cWystąpił błąd serwera!");
     public final static BaseComponent[] NO_PERMISSION = new ComponentBuilder()
             .color(ChatColor.RED)
