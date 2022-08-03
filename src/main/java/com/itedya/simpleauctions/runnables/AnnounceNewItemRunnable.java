@@ -2,6 +2,7 @@ package com.itedya.simpleauctions.runnables;
 
 import com.itedya.simpleauctions.daos.AuctionDao;
 import com.itedya.simpleauctions.dtos.AuctionDto;
+import com.itedya.simpleauctions.utils.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
@@ -29,18 +30,22 @@ public class AnnounceNewItemRunnable extends BukkitRunnable {
         }
 
         ComponentBuilder componentBuilder = new ComponentBuilder()
-                .append("LICYTACJA ").color(ChatColor.YELLOW)
+                .append(ChatUtil.PREFIX)
+                .append(" licytacja przedmiotu ").color(ChatColor.GRAY)
                 .append("x" + auctionDto.quantity).bold(true).color(ChatColor.GOLD)
                 .append(" ")
                 .append(new TranslatableComponent(auctionDto.material.getTranslationKey()))
                 .append(" gracza ").bold(false).color(ChatColor.GRAY)
                 .append(seller.getName()).bold(true).color(ChatColor.GOLD)
-                .append(" rozpoczęła się").bold(false).color(ChatColor.GRAY);
+                .append(" rozpoczęła się. ").bold(false).color(ChatColor.GRAY)
+                .append("Cena startowa ")
+                .append(auctionDto.startingPrice + "$").bold(true).color(ChatColor.YELLOW)
+                .append(" ");
 
         TextComponent bidComponent = new TextComponent("[LICYTUJ]");
         bidComponent.setColor(ChatColor.GREEN);
         bidComponent.setBold(true);
-        bidComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/licytacje licytuj"));
+        bidComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/licytacje licytuj "));
 
         componentBuilder.append(bidComponent);
 
