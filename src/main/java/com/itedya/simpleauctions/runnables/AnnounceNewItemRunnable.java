@@ -3,6 +3,7 @@ package com.itedya.simpleauctions.runnables;
 import com.itedya.simpleauctions.daos.AuctionDao;
 import com.itedya.simpleauctions.dtos.AuctionDto;
 import com.itedya.simpleauctions.utils.ChatUtil;
+import com.itedya.simpleauctions.utils.ThreadUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
@@ -18,7 +19,7 @@ public class AnnounceNewItemRunnable extends BukkitRunnable {
             return;
         }
 
-        AuctionDto auctionDto = AuctionDao.shift();
+        AuctionDto auctionDto = AuctionDao.first();
         if (auctionDto == null) return;
 
         ScheduleAuctionAnnounciationRunnable.announcing = true;
@@ -55,6 +56,6 @@ public class AnnounceNewItemRunnable extends BukkitRunnable {
             player.sendMessage(componentBuilder.create());
         }
 
-        ScheduleAuctionAnnounciationRunnable.announcing = false;
+        ThreadUtil.syncDelay(new AnnounceItemRunnable(1), 30 * 20);
     }
 }
