@@ -2,32 +2,48 @@ package com.itedya.simpleauctions.runnables;
 
 import com.itedya.simpleauctions.daos.AuctionDao;
 import com.itedya.simpleauctions.dtos.AuctionDto;
+import com.itedya.simpleauctions.dtos.BidDto;
 import com.itedya.simpleauctions.utils.ChatUtil;
 import com.itedya.simpleauctions.utils.ThreadUtil;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
-public class AnnounceNewItemRunnable extends BukkitRunnable {
+public class AnnounceItemRunnable extends BukkitRunnable {
+    private int nthAlert = 0;
+
+    public AnnounceItemRunnable(int nthAlert) {
+        this.nthAlert = nthAlert;
+    }
+
     @Override
     public void run() {
-        if (ScheduleAuctionAnnounciationRunnable.announcing) {
+        AuctionDto auctionDto = AuctionDao.first();
+        if (auctionDto == null) {
+            ScheduleAuctionAnnounciationRunnable.announcing = false;
             return;
         }
-
-        AuctionDto auctionDto = AuctionDao.first();
-        if (auctionDto == null) return;
-
-        ScheduleAuctionAnnounciationRunnable.announcing = true;
 
         Player seller = Bukkit.getPlayer(UUID.fromString(auctionDto.sellerUUID));
         if (seller == null) {
             ScheduleAuctionAnnounciationRunnable.announcing = false;
             return;
+        }
+
+        int price = -1;
+
+        BidDto highestBid = auctionDto.getHighestBid();
+        if (highestBid == null) {
+            price = auctionDto.startingPrice;
+        } else {
+            price = highestBid.price;
         }
 
         ComponentBuilder componentBuilder = new ComponentBuilder()
@@ -38,9 +54,9 @@ public class AnnounceNewItemRunnable extends BukkitRunnable {
                 .append(new TranslatableComponent(auctionDto.material.getTranslationKey()))
                 .append(" gracza ").bold(false).color(ChatColor.GRAY)
                 .append(seller.getName()).bold(true).color(ChatColor.GOLD)
-                .append(" rozpoczęła się. ").bold(false).color(ChatColor.GRAY)
-                .append("Cena startowa ")
-                .append(auctionDto.startingPrice + "$").bold(true).color(ChatColor.YELLOW)
+                .append(". ").bold(false).color(ChatColor.GRAY)
+                .append("Cena ")
+                .append(price + "$").bold(true).color(ChatColor.YELLOW)
                 .append(" ");
 
         TextComponent bidComponent = new TextComponent("[LICYTUJ]");
@@ -50,12 +66,18 @@ public class AnnounceNewItemRunnable extends BukkitRunnable {
 
         componentBuilder.append(bidComponent);
 
+
         var onlinePlayers = Bukkit.getOnlinePlayers();
 
         for (var player : onlinePlayers) {
             player.sendMessage(componentBuilder.create());
         }
 
-        ThreadUtil.syncDelay(new AnnounceItemRunnable(1), 30 * 20);
+        if (nthAlert >= 2) {
+            ThreadUtil.syncDelay(new AnnounceEndSecondsOfAuctionRunnable(5), 25 * 20);
+            return;
+        }
+
+        ThreadUtil.syncDelay(new AnnounceItemRunnable(nthAlert + 1), 30 * 20);
     }
 }

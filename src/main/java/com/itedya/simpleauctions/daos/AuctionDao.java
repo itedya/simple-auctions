@@ -14,17 +14,31 @@ import java.util.UUID;
 public class AuctionDao {
     private final static List<AuctionDto> data = new ArrayList();
 
+    /**
+     * Gets size of data array
+     *
+     * @return size
+     */
     public static int getSize() {
         return data.size();
     }
 
+    /**
+     * Creates AuctionDTO from provided data
+     *
+     * @param seller        Player that is selling an item
+     * @param material      Material of item
+     * @param quantity      Quantity of item
+     * @param startingPrice Auction starting price
+     * @return AuctionDTO
+     */
     public static AuctionDto create(Player seller, Material material, int quantity, int startingPrice) {
         AuctionDto auctionDto = new AuctionDto();
         auctionDto.uuid = UUID.randomUUID().toString();
-        auctionDto.buyerUUID = null;
         auctionDto.sellerUUID = seller.getUniqueId().toString();
         auctionDto.material = material;
         auctionDto.startingPrice = startingPrice;
+        auctionDto.bids = new ArrayList<>();
         auctionDto.quantity = quantity;
         auctionDto.createdAt = new Date(Calendar.getInstance().getTime().getTime());
         auctionDto.updatedAt = auctionDto.createdAt;
@@ -34,13 +48,23 @@ public class AuctionDao {
         return auctionDto;
     }
 
-    public static @Nullable AuctionDto shift() {
+    /**
+     * Gets first item from data array
+     *
+     * @return AuctionDTO
+     */
+    public static @Nullable AuctionDto first() {
         try {
-            var item = data.get(0);
-            data.remove(0);
-            return item;
+            return data.get(0);
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * Removes first item from data array
+     */
+    public static void removeFirst() {
+        data.remove(0);
     }
 }
