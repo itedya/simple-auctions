@@ -27,7 +27,8 @@ public class Main extends SubCommand {
     }
 
     public final Map<String, SubCommand> executorMap = new HashMap<>(Map.ofEntries(
-            Map.entry("stworz", new CreateAuctionSubCommand())
+            Map.entry("stworz", new CreateAuctionSubCommand()),
+            Map.entry("licytuj", new BidAuctionSubCommand())
     ));
 
     @Override
