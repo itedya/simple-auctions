@@ -35,4 +35,17 @@ public class AuctionDto implements Dto {
 
         return bids.get(highestBidIndex);
     }
+
+    public int getCurrentPrice() {
+        int price = -1;
+
+        BidDto highestBid = this.getHighestBid();
+        if (highestBid == null) {
+            price = this.startingPrice;
+        } else {
+            price = highestBid.price;
+        }
+
+        return price;
+    }
 }
