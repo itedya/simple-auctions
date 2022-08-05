@@ -1,6 +1,7 @@
 package com.itedya.simpleauctions.daos;
 
 import com.itedya.simpleauctions.dtos.AuctionDto;
+import com.itedya.simpleauctions.dtos.BidDto;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -66,5 +67,10 @@ public class AuctionDao {
      */
     public static void removeFirst() {
         data.remove(0);
+    }
+
+    public static void addBid(BidDto bidDto) {
+        AuctionDto auctionDto = first();
+        auctionDto.bids.add(bidDto);
     }
 }
