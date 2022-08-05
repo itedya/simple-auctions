@@ -1,5 +1,6 @@
 package com.itedya.simpleauctions.commands;
 
+import com.itedya.simpleauctions.SimpleAuctions;
 import com.itedya.simpleauctions.daos.AuctionDao;
 import com.itedya.simpleauctions.dtos.AuctionDto;
 import com.itedya.simpleauctions.dtos.BidDto;
@@ -8,6 +9,7 @@ import com.itedya.simpleauctions.utils.ChatUtil;
 import com.itedya.simpleauctions.utils.ThreadUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 public class BidAuctionSubCommand extends SubCommand {
@@ -83,16 +84,17 @@ public class BidAuctionSubCommand extends SubCommand {
                 return true;
             }
 
+            Economy economy = SimpleAuctions.getEconomy();
+
+            if (!economy.has(player, providedPrice)) {
+                player.sendMessage(ChatColor.RED + "Nie masz tylu pieniędzy na koncie!");
+                return true;
+            }
+
             BidDto bidDto = new BidDto();
             bidDto.playerUUID = playerUUID;
             bidDto.price = providedPrice;
             AuctionDao.addBid(bidDto);
-
-//            player.sendMessage(new ComponentBuilder()
-//                    .color(ChatColor.YELLOW)
-//                    .append("Zalicytowałeś przedmiot za ")
-//                    .append(providedPrice + "$").bold(true).color(ChatColor.GOLD)
-//                    .create());
 
             ThreadUtil.sync(new AnnounceBidRunnable(auctionDto));
         } catch (Exception e) {
