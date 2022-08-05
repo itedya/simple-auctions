@@ -1,11 +1,13 @@
 package com.itedya.simpleauctions.runnables;
 
+import com.itedya.simpleauctions.SimpleAuctions;
 import com.itedya.simpleauctions.dtos.AuctionDto;
 import com.itedya.simpleauctions.dtos.BidDto;
 import com.itedya.simpleauctions.utils.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TranslatableComponent;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -54,12 +56,16 @@ public class EndOfSoldAuctionRunnable extends BukkitRunnable {
                 .append(buyer.getName() + " ").bold(true).color(ChatColor.GOLD)
                 .append(bidDto.price + "$").color(ChatColor.YELLOW);
 
+        Economy economy = SimpleAuctions.getEconomy();
+
+        economy.depositPlayer(seller, bidDto.price);
+        economy.withdrawPlayer(buyer, bidDto.price);
+
         var onlinePlayers = Bukkit.getOnlinePlayers();
 
         for (var player : onlinePlayers) {
             player.sendMessage(componentBuilder.create());
         }
 
-        // TODO: dodaj saldo do konta sellerowi
     }
 }
