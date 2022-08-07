@@ -31,6 +31,7 @@ public class Main extends SubCommand {
             Map.entry("licytuj", new BidAuctionSubCommand())
     ));
 
+//    TODO: dodaj komende na wylistowanie wszystkich licytacji w kolejce
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
