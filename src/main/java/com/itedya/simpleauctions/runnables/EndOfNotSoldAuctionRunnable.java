@@ -1,6 +1,8 @@
 package com.itedya.simpleauctions.runnables;
 
+import com.itedya.simpleauctions.daos.ItemPersistenceDao;
 import com.itedya.simpleauctions.dtos.AuctionDto;
+import com.itedya.simpleauctions.dtos.ItemPersistenceDto;
 import com.itedya.simpleauctions.utils.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -34,7 +36,11 @@ public class EndOfNotSoldAuctionRunnable extends BukkitRunnable {
 
             inventory.addItem(itemStack);
         } else {
-            // TODO: zrob cos z tym
+            ItemPersistenceDto dto = new ItemPersistenceDto();
+            dto.material = auctionDto.material;
+            dto.quantity = auctionDto.quantity;
+
+            ItemPersistenceDao.addItem(auctionDto.sellerUUID, dto);
         }
 
         ComponentBuilder componentBuilder = new ComponentBuilder()
