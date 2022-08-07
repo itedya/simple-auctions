@@ -15,12 +15,15 @@ public class ItemPersistenceListener implements Listener {
     @EventHandler()
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        String playerUUID = player.getUniqueId().toString();
 
-        List<ItemPersistenceDto> dtos = ItemPersistenceDao.getByUUID(player.getUniqueId().toString());
+        List<ItemPersistenceDto> dtos = ItemPersistenceDao.getByUUID(playerUUID);
 
         dtos.forEach(dto -> {
             Inventory inventory = player.getInventory();
             inventory.addItem(new ItemStack(dto.material, dto.quantity));
         });
+
+        ItemPersistenceDao.removeByUUID(playerUUID);
     }
 }

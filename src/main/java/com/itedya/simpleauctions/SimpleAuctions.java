@@ -1,9 +1,13 @@
 package com.itedya.simpleauctions;
 
 import com.itedya.simpleauctions.commands.Main;
+import com.itedya.simpleauctions.daos.AuctionDao;
+import com.itedya.simpleauctions.daos.ItemPersistenceDao;
 import com.itedya.simpleauctions.listeners.ItemPersistenceListener;
+import com.itedya.simpleauctions.runnables.EndOfNotSoldAuctionRunnable;
 import com.itedya.simpleauctions.runnables.ScheduleAuctionAnnounciationRunnable;
 import com.itedya.simpleauctions.utils.ThreadUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,16 +33,25 @@ public final class SimpleAuctions extends JavaPlugin {
     }
 
     private static Economy econ = null;
+    private static Integer savePersistenceAsyncThreadId = null;
 
     @Override
     public void onEnable() {
         instance = this;
+
+        File dataFolder = getDataFolder();
+        if (!dataFolder.exists()) {
+            dataFolder.mkdir();
+        }
 
         if (!setupEconomy()) {
             this.getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        ItemPersistenceDao.read();
+        savePersistenceAsyncThreadId = ThreadUtil.asyncRepeat(ItemPersistenceDao::save, 300);
 
         try {
             PluginCommand command = this.getCommand("licytacje");
@@ -72,5 +85,15 @@ public final class SimpleAuctions extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Bukkit.getScheduler().cancelTask(savePersistenceAsyncThreadId);
+
+        var auctions = AuctionDao.all();
+
+        auctions.forEach(dto -> {
+            var runnable = new EndOfNotSoldAuctionRunnable(dto);
+            runnable.run();
+        });
+
+        ItemPersistenceDao.save();
     }
 }
