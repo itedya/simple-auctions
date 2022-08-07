@@ -73,4 +73,8 @@ public class AuctionDao {
         AuctionDto auctionDto = first();
         auctionDto.bids.add(bidDto);
     }
+
+    public static List<AuctionDto> all() {
+        return data;
+    }
 }
