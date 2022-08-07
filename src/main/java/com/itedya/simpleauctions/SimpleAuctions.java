@@ -1,6 +1,7 @@
 package com.itedya.simpleauctions;
 
 import com.itedya.simpleauctions.commands.Main;
+import com.itedya.simpleauctions.listeners.ItemPersistenceListener;
 import com.itedya.simpleauctions.runnables.ScheduleAuctionAnnounciationRunnable;
 import com.itedya.simpleauctions.utils.ThreadUtil;
 import org.bukkit.command.PluginCommand;
@@ -44,6 +45,8 @@ public final class SimpleAuctions extends JavaPlugin {
             assert command != null : "Command is null!";
 
             Main.register();
+
+            this.getServer().getPluginManager().registerEvents(new ItemPersistenceListener(), this);
 
             ThreadUtil.sync(new ScheduleAuctionAnnounciationRunnable());
         } catch (Exception e) {
