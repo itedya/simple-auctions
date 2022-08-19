@@ -37,15 +37,21 @@ public class BidAuctionSubCommand extends SubCommand {
                 return true;
             }
 
-            AuctionDto auctionDto = AuctionDao.first();
+            AuctionDao auctionDao = AuctionDao.getInstance();
+            AuctionDto auctionDto = auctionDao.getActive();
+
             if (auctionDto == null) {
-                player.sendMessage(ChatColor.YELLOW + "Aktualnie żaden przedmiot nie jest na licytacji");
+                player.sendMessage(new ComponentBuilder()
+                        .append(ChatUtil.PREFIX)
+                        .append(" Aktualnie żaden przedmiot nie jest na licytacji").color(ChatColor.YELLOW)
+                        .create());
                 return true;
             }
 
             if (args.length == 0) {
                 player.sendMessage(new ComponentBuilder()
-                        .append("Musisz podać ").color(ChatColor.RED)
+                        .append(ChatUtil.PREFIX)
+                        .append(" Musisz podać ").color(ChatColor.RED)
                         .append("swoją cenę za przedmiot").bold(true)
                         .append(" i musi ona być wyższa od aktualnej ceny licytowanego przedmiotu").bold(false).color(ChatColor.RED)
                         .create());
@@ -56,7 +62,10 @@ public class BidAuctionSubCommand extends SubCommand {
             try {
                 providedPrice = Integer.parseInt(args[0]);
             } catch (Exception e) {
-                player.sendMessage(ChatColor.RED + "Nie podałeś poprawnej liczby!");
+                player.sendMessage(new ComponentBuilder()
+                        .append(ChatUtil.PREFIX)
+                        .append(" Nie podałeś poprawnej liczby!").color(ChatColor.RED)
+                        .create());
                 return true;
             }
 
@@ -64,7 +73,8 @@ public class BidAuctionSubCommand extends SubCommand {
 
             if (providedPrice <= currentPrice) {
                 player.sendMessage(new ComponentBuilder()
-                        .append("Twoja cena musi być większa od aktualnej ceny przedmiotu, która wynosi ").color(ChatColor.RED)
+                        .append(ChatUtil.PREFIX)
+                        .append(" Twoja cena musi być większa od aktualnej ceny przedmiotu, która wynosi ").color(ChatColor.RED)
                         .append(currentPrice + "$").color(ChatColor.RED).bold(true)
                         .create());
                 return true;
@@ -73,32 +83,47 @@ public class BidAuctionSubCommand extends SubCommand {
             String playerUUID = player.getUniqueId().toString();
 
             if (auctionDto.sellerUUID.equals(playerUUID)) {
-                player.sendMessage(ChatColor.RED + "Nie możesz licytować swojej aukcji");
+                player.sendMessage(new ComponentBuilder()
+                        .append(ChatUtil.PREFIX)
+                        .append(" Nie możesz licytować swojej aukcji").color(ChatColor.RED)
+                        .create());
                 return true;
             }
 
             // TODO: sprawdź czy ten check działa
             BidDto highestBid = auctionDto.getHighestBid();
             if (highestBid != null && highestBid.playerUUID.equals(playerUUID)) {
-                player.sendMessage(ChatColor.RED + "Nie możesz licytować aukcji w której oferujesz już największą cenę");
+                player.sendMessage(new ComponentBuilder()
+                        .append(ChatUtil.PREFIX)
+                        .append(" Nie możesz licytować aukcji w której oferujesz już największą cenę").color(ChatColor.RED)
+                        .create());
                 return true;
             }
 
             Economy economy = SimpleAuctions.getEconomy();
 
             if (!economy.has(player, providedPrice)) {
-                player.sendMessage(ChatColor.RED + "Nie masz tylu pieniędzy na koncie!");
+                player.sendMessage(new ComponentBuilder()
+                        .append(ChatUtil.PREFIX)
+                        .append(" Nie masz tylu pieniędzy na koncie!").color(ChatColor.RED)
+                        .create());
                 return true;
             }
 
             BidDto bidDto = new BidDto();
             bidDto.playerUUID = playerUUID;
             bidDto.price = providedPrice;
-            AuctionDao.addBid(bidDto);
+            auctionDao.addBid(bidDto);
+            auctionDao.addTTL(15);
 
             ThreadUtil.sync(new AnnounceBidRunnable(auctionDto));
         } catch (Exception e) {
             e.printStackTrace();
+            commandSender.sendMessage(new ComponentBuilder()
+                    .append(ChatUtil.PREFIX)
+                    .append(" ")
+                    .append(ChatUtil.SERVER_ERROR)
+                    .create());
         }
 
         return true;

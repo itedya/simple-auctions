@@ -26,7 +26,7 @@ public class AnnounceBidRunnable extends BukkitRunnable {
     public void run() {
         OfflinePlayer seller = Bukkit.getOfflinePlayer(UUID.fromString(auctionDto.sellerUUID));
 
-        BidDto bidDto = AuctionDao.first().getHighestBid();
+        BidDto bidDto = auctionDto.getHighestBid();
 
         int price = bidDto.price;
         OfflinePlayer bidder = Bukkit.getOfflinePlayer(UUID.fromString(bidDto.playerUUID));

@@ -2,10 +2,12 @@ package com.itedya.simpleauctions.daos;
 
 import com.itedya.simpleauctions.dtos.AuctionDto;
 import com.itedya.simpleauctions.dtos.BidDto;
+import com.itedya.simpleauctions.runnables.*;
+import com.itedya.simpleauctions.utils.ThreadUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,16 +15,53 @@ import java.util.List;
 import java.util.UUID;
 
 public class AuctionDao {
-    private final static List<AuctionDto> data = new ArrayList();
+    private static AuctionDao instance;
 
-    /**
-     * Gets size of data array
-     *
-     * @return size
-     */
-    public static int getSize() {
-        return data.size();
+    public static AuctionDao getInstance() {
+        if (instance == null) instance = new AuctionDao();
+        return instance;
     }
+
+    private final int taskId;
+
+    private AuctionDao() {
+        taskId = ThreadUtil.syncRepeat(this::removeOneSecond, 20);
+    }
+
+    public void cancelTask() {
+        Bukkit.getScheduler().cancelTask(taskId);
+    }
+
+    public void removeOneSecond() {
+        if (this.active == null) {
+            if (queue.size() == 0) {
+                return;
+            } else {
+                active = this.firstInQueue();
+                this.removeFirstInQueue();
+            }
+        }
+
+        if (active.ttl == 90 || active.ttl == 60 || active.ttl == 30) {
+            ThreadUtil.sync(new AnnounceItemRunnable(active));
+        } else if (active.ttl == 15 || active.ttl == 10 || (active.ttl >= 1 && active.ttl <= 5)) {
+            ThreadUtil.sync(new AnnounceEndSecondsOfAuctionRunnable(active.ttl));
+        } else if (active.ttl == 0) {
+            if (active.bids.size() == 0) {
+                ThreadUtil.sync(new EndOfNotSoldAuctionRunnable(active));
+            } else {
+                ThreadUtil.sync(new EndOfSoldAuctionRunnable(active));
+            }
+
+            active = null;
+            return;
+        }
+
+        active.ttl -= 1;
+    }
+
+    private final List<AuctionDto> queue = new ArrayList();
+    private AuctionDto active = null;
 
     /**
      * Creates AuctionDTO from provided data
@@ -33,7 +72,7 @@ public class AuctionDao {
      * @param startingPrice Auction starting price
      * @return AuctionDTO
      */
-    public static AuctionDto create(Player seller, Material material, int quantity, int startingPrice) {
+    public AuctionDto create(Player seller, Material material, int quantity, int startingPrice) {
         AuctionDto auctionDto = new AuctionDto();
         auctionDto.uuid = UUID.randomUUID().toString();
         auctionDto.sellerUUID = seller.getUniqueId().toString();
@@ -41,40 +80,42 @@ public class AuctionDao {
         auctionDto.startingPrice = startingPrice;
         auctionDto.bids = new ArrayList<>();
         auctionDto.quantity = quantity;
+        auctionDto.ttl = 90;
         auctionDto.createdAt = new Date(Calendar.getInstance().getTime().getTime());
         auctionDto.updatedAt = auctionDto.createdAt;
         auctionDto.deletedAt = null;
-        data.add(auctionDto);
+
+        if (active == null) active = auctionDto;
+        else queue.add(auctionDto);
 
         return auctionDto;
     }
 
-    /**
-     * Gets first item from data array
-     *
-     * @return AuctionDTO
-     */
-    public static @Nullable AuctionDto first() {
-        try {
-            return data.get(0);
-        } catch (Exception e) {
-            return null;
-        }
+    public int getQueueSize() {
+        return queue.size();
     }
 
-    /**
-     * Removes first item from data array
-     */
-    public static void removeFirst() {
-        data.remove(0);
+    public void removeFirstInQueue() {
+        queue.remove(0);
     }
 
-    public static void addBid(BidDto bidDto) {
-        AuctionDto auctionDto = first();
-        auctionDto.bids.add(bidDto);
+    public AuctionDto firstInQueue() {
+        return queue.get(0);
     }
 
-    public static List<AuctionDto> all() {
-        return data;
+    public AuctionDto getActive() {
+        return active;
+    }
+
+    public void addBid(BidDto bidDto) {
+        active.bids.add(bidDto);
+    }
+
+    public void addTTL(int sec) {
+        active.ttl += sec;
+    }
+
+    public List<AuctionDto> allInQueue() {
+        return queue;
     }
 }
