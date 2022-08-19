@@ -3,9 +3,9 @@ package com.itedya.simpleauctions;
 import com.itedya.simpleauctions.commands.Main;
 import com.itedya.simpleauctions.daos.AuctionDao;
 import com.itedya.simpleauctions.daos.ItemPersistenceDao;
+import com.itedya.simpleauctions.dtos.AuctionDto;
 import com.itedya.simpleauctions.listeners.ItemPersistenceListener;
 import com.itedya.simpleauctions.runnables.EndOfNotSoldAuctionRunnable;
-import com.itedya.simpleauctions.runnables.ScheduleAuctionAnnounciationRunnable;
 import com.itedya.simpleauctions.utils.ThreadUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -60,8 +60,6 @@ public final class SimpleAuctions extends JavaPlugin {
             Main.register();
 
             this.getServer().getPluginManager().registerEvents(new ItemPersistenceListener(), this);
-
-            ThreadUtil.sync(new ScheduleAuctionAnnounciationRunnable());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -86,10 +84,19 @@ public final class SimpleAuctions extends JavaPlugin {
     @Override
     public void onDisable() {
         Bukkit.getScheduler().cancelTask(savePersistenceAsyncThreadId);
+        
+        AuctionDao auctionDao = AuctionDao.getInstance();
+        auctionDao.cancelTask();
 
-        var auctions = AuctionDao.all();
+        AuctionDto activeAuction = auctionDao.getActive();
 
-        auctions.forEach(dto -> {
+        if (activeAuction != null) {
+            ThreadUtil.sync(new EndOfNotSoldAuctionRunnable(activeAuction));
+        }
+
+        var queue = auctionDao.allInQueue();
+
+        queue.forEach(dto -> {
             var runnable = new EndOfNotSoldAuctionRunnable(dto);
             runnable.run();
         });
