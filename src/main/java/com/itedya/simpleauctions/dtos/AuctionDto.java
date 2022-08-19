@@ -12,6 +12,7 @@ public class AuctionDto implements Dto {
     public int startingPrice;
     public List<BidDto> bids;
     public int quantity;
+    public int ttl;
     public Date createdAt;
     public Date updatedAt;
     public Date deletedAt;
