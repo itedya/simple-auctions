@@ -2,6 +2,7 @@ package com.itedya.simpleauctions.runnables;
 
 import com.itedya.simpleauctions.daos.AuctionDao;
 import com.itedya.simpleauctions.utils.ChatUtil;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -38,19 +39,28 @@ public class CreateAuctionRunnable extends BukkitRunnable {
 
             inventory.removeItemAnySlot(itemStack);
 
-            AuctionDao.create(executor, material, quantity, startingPrice);
+            AuctionDao auctionDao = AuctionDao.getInstance();
+            auctionDao.create(executor, material, quantity, startingPrice);
 
-            int size = AuctionDao.getSize();
+            int size = auctionDao.getQueueSize();
 
-            String message = "&a&lDodano przedmiot na sprzedaż!";
+            String message = "&a&lDodano przedmiot na sprzedaż! ";
 
-            if (size != 1) {
-                message += "Jesteś %d w kolejce".formatted(AuctionDao.getSize() - 1);
+            if (size != 0) {
+                message += "Jesteś %d w kolejce".formatted(size);
             }
 
-            executor.sendMessage(ChatUtil.p(message));
+            executor.sendMessage(new ComponentBuilder()
+                    .append(ChatUtil.PREFIX)
+                    .append(" ")
+                    .append(ChatUtil.p(message))
+                    .create());
         } catch (Exception e) {
-            executor.sendMessage(ChatUtil.SERVER_ERROR);
+            executor.sendMessage(new ComponentBuilder()
+                    .append(ChatUtil.PREFIX)
+                    .append(" ")
+                    .append(ChatUtil.SERVER_ERROR)
+                    .create());
             e.printStackTrace();
         }
     }

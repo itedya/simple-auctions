@@ -17,7 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.UUID;
 
 public class EndOfNotSoldAuctionRunnable extends BukkitRunnable {
-    private AuctionDto auctionDto;
+    private final AuctionDto auctionDto;
 
     public EndOfNotSoldAuctionRunnable(AuctionDto auctionDto) {
         this.auctionDto = auctionDto;

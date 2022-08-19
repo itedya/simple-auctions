@@ -37,22 +37,5 @@ public class AnnounceEndSecondsOfAuctionRunnable extends BukkitRunnable {
         for (var player : onlinePlayers) {
             player.sendMessage(componentBuilder.create());
         }
-
-        if (sec - 1 == -1) {
-            AuctionDto auctionDto = AuctionDao.first();
-            AuctionDao.removeFirst();
-
-            if (auctionDto.getHighestBid() != null) {
-                ThreadUtil.sync(new EndOfSoldAuctionRunnable(auctionDto));
-            } else {
-                ThreadUtil.sync(new EndOfNotSoldAuctionRunnable(auctionDto));
-            }
-
-            ScheduleAuctionAnnounciationRunnable.announcing = false;
-
-            return;
-        }
-
-        ThreadUtil.syncDelay(new AnnounceEndSecondsOfAuctionRunnable(sec - 1), 20);
     }
 }

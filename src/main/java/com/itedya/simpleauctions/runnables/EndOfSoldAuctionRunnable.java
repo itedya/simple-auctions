@@ -20,7 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.UUID;
 
 public class EndOfSoldAuctionRunnable extends BukkitRunnable {
-    private AuctionDto auctionDto;
+    private final AuctionDto auctionDto;
 
     public EndOfSoldAuctionRunnable(AuctionDto auctionDto) {
         this.auctionDto = auctionDto;
