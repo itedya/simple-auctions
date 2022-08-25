@@ -1,8 +1,11 @@
 package com.itedya.simpleauctions.commands;
 
 import com.itedya.simpleauctions.SimpleAuctions;
+import com.itedya.simpleauctions.daos.AuctionDao;
+import com.itedya.simpleauctions.dtos.AuctionDto;
 import com.itedya.simpleauctions.prompts.create.HowMuchQuantityOfItemPrompt;
 import com.itedya.simpleauctions.utils.ChatUtil;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -40,6 +43,14 @@ public class CreateAuctionSubCommand extends SubCommand {
 
             if (heldItem.getType().equals(Material.AIR)) {
                 player.sendMessage(ChatUtil.p("&cMusisz trzymać przedmiot w ręce, aby wykonać tą komendę!"));
+                return true;
+            }
+
+            AuctionDao auctionDao = AuctionDao.getInstance();
+
+            List<AuctionDto> auctions = auctionDao.getFromQueueBySellerUuid(player.getUniqueId().toString());
+            if (auctions.size() >= 4) {
+                player.sendMessage(ChatUtil.PREFIX + ChatColor.RED + " Możesz mieć maksymalnie 4 licytacje w kolejce!");
                 return true;
             }
 
