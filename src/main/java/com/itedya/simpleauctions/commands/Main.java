@@ -29,10 +29,10 @@ public class Main extends SubCommand {
     public final Map<String, SubCommand> executorMap = new HashMap<>(Map.ofEntries(
             Map.entry("stworz", new CreateAuctionSubCommand()),
             Map.entry("licytuj", new BidAuctionSubCommand()),
-            Map.entry("pomoc", new HelpSubCommand())
+            Map.entry("pomoc", new HelpSubCommand()),
+            Map.entry("lista", new ListAuctionsSubCommand())
     ));
 
-//    TODO: dodaj komende na wylistowanie wszystkich licytacji w kolejce
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
