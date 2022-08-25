@@ -118,4 +118,9 @@ public class AuctionDao {
     public List<AuctionDto> allInQueue() {
         return queue;
     }
+
+    public List<AuctionDto> getFromQueueBySellerUuid(String uuid) {
+        return queue.stream().filter(ele -> ele.sellerUUID.equals(uuid))
+                .toList();
+    }
 }
