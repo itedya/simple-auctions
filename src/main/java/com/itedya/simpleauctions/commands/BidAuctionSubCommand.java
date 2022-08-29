@@ -80,6 +80,9 @@ public class BidAuctionSubCommand extends SubCommand {
                 return true;
             }
 
+            boolean validDelta = checkMinimumBid(player, providedPrice, currentPrice);
+            if (!validDelta) return true;
+
             String playerUUID = player.getUniqueId().toString();
 
             if (auctionDto.sellerUUID.equals(playerUUID)) {
@@ -136,5 +139,37 @@ public class BidAuctionSubCommand extends SubCommand {
         }
 
         return new ArrayList<>();
+    }
+
+    //    1 - 50 1
+    //    50 - 100 5
+    //    100 - 1000 10
+    //    1000 - ~ 100
+    public boolean checkMinimumBid(Player player, int providedPrice, int currentPrice) {
+        int delta = providedPrice - currentPrice;
+
+        if (currentPrice >= 1000) {
+            if (delta < 100) {
+                player.sendMessage(ChatUtil.PREFIX + ChatColor.YELLOW + " W tym przedziale cenowym możesz przebić o minimum 100$");
+                return false;
+            }
+        } else if (currentPrice >= 100) {
+            if (delta < 10) {
+                player.sendMessage(ChatUtil.PREFIX + ChatColor.YELLOW + " W tym przedziale cenowym możesz przebić o minimum 10$");
+                return false;
+            }
+        } else if (currentPrice >= 50) {
+            if (delta < 5) {
+                player.sendMessage(ChatUtil.PREFIX + ChatColor.YELLOW + " W tym przedziale cenowym możesz przebić o minimum 5$");
+                return false;
+            }
+        } else {
+            if (delta < 1) {
+                player.sendMessage(ChatUtil.PREFIX + ChatColor.YELLOW + " W tym przedziale cenowym możesz przebić o minimum 1$");
+                return false;
+            }
+        }
+
+        return true;
     }
 }
